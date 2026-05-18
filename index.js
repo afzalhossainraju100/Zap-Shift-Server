@@ -4,9 +4,7 @@ const cors = require("cors");
 const app = express();
 require("dotenv").config();
 
-const stripe = require("stripe")(
-  process.env.STRIPE_SECRET_KEY,
-);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const port = process.env.PORT || 3000;
 
@@ -25,8 +23,6 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
-
-
 
 async function run() {
   try {
@@ -113,35 +109,54 @@ async function run() {
     });
 
     //stripe payment intent api
-    app.post('/create-checkout-session', async (req, res) =>{
-      const paymentInfo = req.body;
-      const amount = parseInt(paymentInfo.amount) * 100;
+    app.post("/create-checkout-session", async (req, res) => {
+      try {
+        const { parcelId, senderEmail, parcelName } = req.body;
+        const rawAmount = req.body.amount ?? req.body.cost;
+        const amount = Number(rawAmount);
 
-      const session = await stripe.checkout.sessions.create({
-        line_items: [
-          {
-            price_data: {
-              currency: "USD",
-              unit_amount: amount,
-              product_data: {
-                name: paymentInfo.parcelName,
+        if (
+          !parcelId ||
+          !senderEmail ||
+          !parcelName ||
+          !Number.isFinite(amount) ||
+          amount <= 0
+        ) {
+          return res.status(400).json({
+            message: "Invalid payment payload",
+          });
+        }
+
+        const session = await stripe.checkout.sessions.create({
+          line_items: [
+            {
+              price_data: {
+                currency: "usd",
+                unit_amount: Math.round(amount * 100),
+                product_data: {
+                  name: parcelName,
+                },
               },
+              quantity: 1,
             },
-            quantity: 1,
+          ],
+          customer_email: senderEmail,
+          mode: "payment",
+          metadata: {
+            parcelId,
           },
-        ],
-        customer_email: paymentInfo.senderEmail,
-        mode: "payment",
-        metadata: {
-          parcelId: paymentInfo.parcelId,
-        },
-        success_url: `${process.env.PAY_DOMAIN}/dashboard/payment-success`,
-        cancel_url: `${process.env.PAY_DOMAIN}/dashboard/payment-cancelled`,
-      });
-      console.log(session);
-      res.send({ url: session.url });
-      // res.redirect(303, session.url);
-    })
+          success_url: `${process.env.PAY_DOMAIN}/dashboard/payment-success`,
+          cancel_url: `${process.env.PAY_DOMAIN}/dashboard/payment-cancelled`,
+        });
+
+        return res.status(200).json({ url: session.url });
+      } catch (error) {
+        console.error("create-checkout-session error:", error);
+        return res.status(500).json({
+          message: "Failed to create checkout session",
+        });
+      }
+    });
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
