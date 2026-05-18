@@ -109,6 +109,12 @@ async function run() {
     });
 
     //stripe payment intent api
+
+    app.post('/payment-checkout-session', async (req, res) => {
+      
+    });
+
+    //old
     app.post("/create-checkout-session", async (req, res) => {
       try {
         const { parcelId, senderEmail, parcelName } = req.body;
@@ -145,7 +151,7 @@ async function run() {
           metadata: {
             parcelId,
           },
-          success_url: `${process.env.PAY_DOMAIN}/dashboard/payment-success`,
+          success_url: `${process.env.PAY_DOMAIN}/dashboard/payment-success?session_id={CHECKOUT_SESSION_ID}`,
           cancel_url: `${process.env.PAY_DOMAIN}/dashboard/payment-cancelled`,
         });
 
