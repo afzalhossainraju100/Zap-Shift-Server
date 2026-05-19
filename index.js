@@ -175,6 +175,7 @@ async function run() {
         }
       };
       await parcelCollection.updateOne(query, update);
+      
     }
     res.send({success: false});
    });
