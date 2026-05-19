@@ -110,11 +110,6 @@ async function run() {
 
     //stripe payment intent api
 
-    app.post('/payment-checkout-session', async (req, res) => {
-      
-    });
-
-    //old
     app.post("/create-checkout-session", async (req, res) => {
       try {
         const { parcelId, senderEmail, parcelName } = req.body;
