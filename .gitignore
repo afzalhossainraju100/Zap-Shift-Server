@@ -2,4 +2,17 @@ node_modules
 dist
 .env
 .env.local
-firebase-adminsdk.json
+# Firebase service account keys must never be committed
+*firebase-adminsdk*.json
+index.old.js
+
+# Old generated notes and scratch files (kept locally only)
+AUTH_SETUP.md
+DEPLOYMENT_CHECKLIST.md
+IMPLEMENTATION_REPORT.md
+QUICK_REFERENCE.md
+README_AUTHENTICATION.md
+TROUBLESHOOTING.md
+text/
+.vercel/
+*.log

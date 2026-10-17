@@ -4,18 +4,24 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "ZapShift parcel delivery API (Express + MongoDB + Firebase Auth + Stripe)",
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.1",
+    "firebase-admin": "^14.3.0",
+    "helmet": "^8.3.0",
     "mongodb": "^7.2.0",
     "stripe": "^22.1.1"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": "22.x"
   }
 }
