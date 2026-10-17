@@ -16,3 +16,5 @@ TROUBLESHOOTING.md
 text/
 .vercel/
 *.log
+
+.vercel
